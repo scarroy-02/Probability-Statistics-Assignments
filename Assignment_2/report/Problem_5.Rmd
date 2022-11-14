@@ -1,1 +1,107 @@
+---
+title: "Problem5"
+date: "2022-11-14"
+output: pdf_document
+---
 
+## Problem 5: Computational Finance - Modelling Stock prices
+
+Following piece of code download the prices of TCS since 2007
+
+```{r}
+library(quantmod)
+getSymbols('TCS.NS')
+tail(TCS.NS)
+```
+Plot the adjusted close prices of TCS
+```{r}
+plot(TCS.NS$TCS.NS.Adjusted)
+```
+
+**Download the data of market index Nifty50**. The Nifty 50 index indicates how the over all market has done over the similar period.
+```{r}
+getSymbols('^NSEI')
+tail(NSEI)
+```
+Plot the adjusted close value of Nifty50
+```{r}
+plot(NSEI$NSEI.Adjusted)
+```
+
+
+### Log-Return 
+We calculate the daily log-return, where log-return is defined as
+$$
+r_t=\log(P_t)-\log(P_{t-1})=\Delta \log(P_t),
+$$
+where $P_t$ is the closing price of the stock on $t^{th}$ day.
+
+```{r}
+TCS_rt = diff(log(TCS.NS$TCS.NS.Adjusted))
+Nifty_rt = diff(log(NSEI$NSEI.Adjusted))
+retrn = cbind.xts(TCS_rt,Nifty_rt) 
+retrn = na.omit(data.frame(retrn))
+plot(retrn$NSEI.Adjusted,retrn$TCS.NS.Adjusted
+     ,pch=20
+     ,xlab='Market Return'
+     ,ylab='TCS Return'
+     ,xlim=c(-0.18,0.18)
+     ,ylim=c(-0.18,0.18))
+grid(col='grey',lty=1)
+```
+
++ Consider the following model:
+
+$$
+r_{t}^{TCS}=\alpha + \beta r_{t}^{Nifty} + \varepsilon,
+$$
+where $\mathbb{E}(\varepsilon)=0$ and $\mathbb{V}ar(\varepsilon)=\sigma^2$.
+
+1. Estimate the parameters of the models $\theta=(\alpha,\beta,\sigma)$ using the method of moments type plug-in estimator discussed in the class.
+```{r}
+ExpY = mean(retrn[,1])
+ExpX = mean(retrn[,2])
+VarY = var(retrn[,1])
+VarX = var(retrn[,2])
+CovXY = cov(retrn[,1],retrn[,2])
+beta_hat_moments = CovXY/VarX
+alpha_hat_moments = ExpY - (beta_hat_moments*ExpX)
+sigma_hat_moments = sqrt((sum((retrn[,1]-alpha_hat_moments-beta_hat_moments*retrn[,2])^2))/length(retrn[,1]))
+```
+The optimal values of parameters are:
+```{r}
+c(alpha_hat_moments,beta_hat_moments,sigma_hat_moments)
+```
+
+2. Estimate the parameters using the `lm` built-in function of `R`. Note that `lm` using the OLS method.
+
+```{r}
+
+fit = summary(lm(retrn[,1]~retrn[,2], data=retrn))
+beta_hat_OLS = fit$coef[2,1]
+alpha_hat_OLS = fit$coef[1,1]
+sigma_hat_OLS = fit$sigma
+```
+The optimal values of parameters are:
+```{r}
+c(alpha_hat_OLS,beta_hat_OLS,sigma_hat_OLS)
+
+```
+3. Fill-up the following table
+
+Parameters | Method of Moments | OLS
+-----------|-------------------|-----
+$\alpha$   |    0.000461       |  0.000461  
+$\beta$    |    0.743697       |  0.743697
+$\sigma$   |    0.016184       |  0.016188
+\newpage
+
+4. If the current value of Nifty is 18000 and it goes up to 18200. The current value of TCS is Rs. 3200/-. How much you can expect TCS price to go up?
+```{r}
+TCS_return = alpha_hat_moments + beta_hat_moments * log(18200/18000)
+TCS_new = 3200*exp(TCS_return)
+```
+New TCS price would be expected to be Rs.
+```{r}
+TCS_new
+```
