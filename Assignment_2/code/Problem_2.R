@@ -1,5 +1,4 @@
 library(stats)
-set.seed(69)
 vector = c()
 gamma_simulation_MLE <- function(N,sim_size,alpha,sigma){
   for (j in 1:sim_size)
