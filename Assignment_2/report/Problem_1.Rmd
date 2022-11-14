@@ -1,7 +1,7 @@
 ---
 title: "Problem 1"
 date: "14/11/2022"
-output:"pdf file"
+output: "pdf file"
 ---
 
 Suppose $X$ denote the number of goals scored by home team in premier league. We can assume $X$ is a random variable. Then we have to build the probability distribution to model the probability of number of goals. Since $X$ takes value in $\mathbb{N}=\{0,1,2,\cdots\}$, we can consider the geometric progression sequence as possible candidate model, i.e.,
