@@ -62,7 +62,7 @@ Yes. We have found the analytically closed expression of mean and variance above
      1.5 & 1 & 2.25 & 380\\ \hline
      \end{tabular}
 \end{table}
-4. Using the summary statistics and your newly defined probability distribution model find the following:  
+Using the summary statistics and your newly defined probability distribution model find the following:  
 Using Method of Moments, if we equate the first moment, i.e the mean  
 We get $\dfrac{r}{1-r}=1.5\implies r=0.6$
 
@@ -98,7 +98,6 @@ If $X_1,X_2,...,X_n$ are i.i.d random variables following Geometric distribution
 Likelihood function:  
 $L(p|x)=\Pi_{i=1}^n p(1-p)^x_i$  
 where $x_i$ take non-negative integer values  
-
 Poisson Distribution:  
 If $X_1,X_2,...,X_n$ are i.i.d random variables following Poisson distribution,  
 Likelihood function:  
